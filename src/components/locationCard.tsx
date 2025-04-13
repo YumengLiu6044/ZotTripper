@@ -1,5 +1,6 @@
 
 import anteaterImg from "../assets/anteater.png";
+import defaultImgURL from "../assets/Campus.jpg"
 
 export type Location = {
 	name: string;
@@ -20,16 +21,15 @@ export type SavedLocationCardProps = Location & {
 	isOrigin: boolean;
 };
 
-const defaultImgURL =
-	"https://pic.onlinewebfonts.com/thumbnails/icons_98811.svg";
 
 export function SearchResultCard(props: SearchResultCardProps) {
 	return (
 		<div className="flex flex-row gap-5 bg-neutral-700/90 p-5 rounded-md border-1 border-white/20">
 			<div className="flex flex-col gap-3 min-w-[200px] max-w-[200px] justify-center items-center">
 				<img
-					src={props.imgURL != "" ? props.imgURL : defaultImgURL}
+					src={props.imgURL !== "" ? props.imgURL : defaultImgURL}
 					className="w-full h-40 rounded-xl"
+					onError={(e) => (e.currentTarget.src = defaultImgURL)}
 				/>
 				{
 					props.doReward ? <img src={anteaterImg} className="w-20 h-10"></img> : null
@@ -59,13 +59,14 @@ export function SearchResultCard(props: SearchResultCardProps) {
 export function AddedLocationCard(props: SavedLocationCardProps) {
 	return (
 		<div
-			className={`flex flex-row gap-5 bg-neutral-700/90 p-5 rounded-md border-1 border-white/20 ${
-				props.isOrigin ? "border-purple-400 border-1" : ""
+			className={`flex flex-row gap-5 bg-neutral-700/90 p-5 rounded-md border-2  ${
+				props.isOrigin ? "border-purple-600" : "border-white/20"
 			}`}
 		>
 			<img
-				src={props.imgURL != "" ? props.imgURL : defaultImgURL}
+				src={props.imgURL !== "" ? props.imgURL : defaultImgURL}
 				className=" min-w-[200px] max-w-[200px]  h-40 rounded-xl"
+				onError={(e) => (e.currentTarget.src = defaultImgURL)}
 			></img>
 			<div className="flex flex-col gap-5 w-full">
 				<span className="text-2xl overflow-ellipsis">{props.name}</span>

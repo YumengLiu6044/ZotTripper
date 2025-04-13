@@ -16,7 +16,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import anteaterImg from "./assets/anteater.png";
 
 const googleAPIKey = import.meta.env.VITE_API_KEY;
-console.log(googleAPIKey)
+console.log(googleAPIKey);
 const libraries: "places"[] = ["places"];
 
 const containerStyle = {
@@ -24,16 +24,21 @@ const containerStyle = {
 	height: "100vh",
 };
 
-function haversineDistance(lat1: number, lng1: number, lat2: number, lng2: number) {
-  const toRad = (x: number) => (x * Math.PI) / 180;
-  const R = 6371;
-  const dLat = toRad(lat2 - lat1);
-  const dLng = toRad(lng2 - lng1);
-  const a =
-    Math.sin(dLat / 2) ** 2 +
-    Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
-  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-  return R * c;
+function haversineDistance(
+	lat1: number,
+	lng1: number,
+	lat2: number,
+	lng2: number
+) {
+	const toRad = (x: number) => (x * Math.PI) / 180;
+	const R = 6371;
+	const dLat = toRad(lat2 - lat1);
+	const dLng = toRad(lng2 - lng1);
+	const a =
+		Math.sin(dLat / 2) ** 2 +
+		Math.cos(toRad(lat1)) * Math.cos(toRad(lat2)) * Math.sin(dLng / 2) ** 2;
+	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+	return R * c;
 }
 
 type LocationLiteral = {
@@ -42,10 +47,9 @@ type LocationLiteral = {
 };
 
 type LeaderBoardObj = {
-	name: string,
-	score: number
-}
-
+	name: string;
+	score: number;
+};
 
 function App() {
 	const [searchQuery, setSearchQuery] = useState<string>("");
@@ -77,11 +81,9 @@ function App() {
 		},
 		{
 			name: "You",
-			score: 0
-		}
+			score: 0,
+		},
 	]);
-
-	
 
 	const [wayPoints, setWayPoints] = useState<
 		google.maps.DirectionsWaypoint[]
@@ -163,6 +165,7 @@ function App() {
 	useEffect(() => {
 		if (mapRef.current) {
 			mapRef.current.panTo({ lat: mapCenterLat, lng: mapCenterLng });
+			mapRef.current.setZoom(17);
 		}
 	}, [mapCenterLat, mapCenterLng]);
 
@@ -216,20 +219,75 @@ function App() {
 		[]
 	);
 
+	const handleMapClick = async (e: google.maps.MapMouseEvent) => {
+		// Only process if it's a POI
+		if (e.latLng) {
+			e.stop(); // Prevent default click behavior (e.g., opening place details)
+
+			const request = {
+				fields: [
+					"displayName",
+					"location",
+					"formattedAddress",
+					"photos",
+				],
+				locationRestriction: {
+					center: e.latLng,
+					radius: 50,
+				},
+				language: "en-US",
+				maxResultCount: 1,
+				region: "us",
+			};
+
+			// Call searchByText passing the request.
+			const { places } = await google.maps.places.Place.searchNearby(
+				request
+			);
+			const cardsData = places
+				.map((place) => {
+					const placeCard: Location = {
+						name: place.displayName ?? "",
+						address: place.formattedAddress ?? "",
+						imgURL:
+							place.photos && place.photos.length > 0
+								? place.photos[0].getURI()
+								: "",
+						lat: place.location?.lat() ?? 0,
+						lng: place.location?.lng() ?? 0,
+					};
+					console.log(placeCard);
+					return placeCard;
+				})
+				.filter((card): card is Location => card !== null);
+
+			if (cardsData.length > 0) {
+				setSearchQuery(cardsData[0].name);
+				setSearchResults(cardsData);
+
+				const randomRewardIndex = Math.floor(
+					Math.random() * cardsData.length
+				);
+				setRewardIndex(randomRewardIndex);
+			}
+		}
+	};
+
 	useEffect(() => {
-		 let leaderBoardCopy = leaderBoard.map((item) => {
-			if (item.name === "You") {
-				return {
-					name: "You",
-					score: totalScore
+		let leaderBoardCopy = leaderBoard
+			.map((item) => {
+				if (item.name === "You") {
+					return {
+						name: "You",
+						score: totalScore,
+					};
+				} else {
+					return item;
 				}
-			}
-			else {
-				return item
-			}
-		}).sort((a, b) => b.score - a.score);
-		setLeaderBoard(leaderBoardCopy)
-	}, [totalScore])
+			})
+			.sort((a, b) => b.score - a.score);
+		setLeaderBoard(leaderBoardCopy);
+	}, [totalScore]);
 
 	return (
 		<div className="relative h-screen w-screen flex flex-row bg-black/95 text-white">
@@ -259,7 +317,11 @@ function App() {
 						}}
 						onLoad={onLoad}
 						zoom={17}
-						options={{ mapTypeControl: false }}
+						onClick={handleMapClick}
+						options={{
+							mapTypeControl: false,
+							clickableIcons: true,
+						}}
 					>
 						{directions
 							? null
@@ -308,7 +370,8 @@ function App() {
 						Miles
 					</span>
 					<span>
-						Total Time <span>{(totalTime / 60).toFixed(2)}</span> mins
+						Total Time <span>{(totalTime / 60).toFixed(2)}</span>{" "}
+						mins
 					</span>
 					<div className="flex gap-2">
 						<input
@@ -327,14 +390,18 @@ function App() {
 			<div className="w-1/6 absolute right-20 bottom-10 flex flex-col p-3 justify-center border-1 border-white/20 rounded-xl bg-black/80 text-lg gap-5">
 				<span className="text-3xl font-medium">Leader Board</span>
 				<div className="flex flex-col ">
-					{
-						leaderBoard.map((item) => (
-							<div className="flex gap-3 w-full justify-between">
-								<span className={item.name === "You" ? "text-purple-400" : ""}>{item.name}</span>
-								<span>{item.score}</span>
-							</div>
-						))
-					}
+					{leaderBoard.map((item) => (
+						<div className="flex gap-3 w-full justify-between">
+							<span
+								className={
+									item.name === "You" ? "text-purple-400" : ""
+								}
+							>
+								{item.name}
+							</span>
+							<span>{item.score}</span>
+						</div>
+					))}
 				</div>
 			</div>
 
@@ -378,13 +445,26 @@ function App() {
 							<div
 								key={index}
 								onClick={() => {
-									setMapCenterLat(item.lat);
-									setMapCenterLng(item.lng);
+									if (mapRef.current) {
+										mapRef.current.panTo({
+											lat: mapCenterLat,
+											lng: mapCenterLng,
+										});
+										mapRef.current.setZoom(17);
+									}
 								}}
 							>
 								<SearchResultCard
 									{...item}
-									doReward={index === rewardIndex && (haversineDistance(item.lat, item.lng, 33.645933,-117.842795) < 5)}
+									doReward={
+										index === rewardIndex &&
+										haversineDistance(
+											item.lat,
+											item.lng,
+											33.645933,
+											-117.842795
+										) < 5
+									}
 									onClickAdd={() => {
 										notify(item.name);
 										if (
@@ -394,7 +474,15 @@ function App() {
 													item.address
 											)
 										) {
-											if (index === rewardIndex && (haversineDistance(item.lat, item.lng, 33.645933,-117.842795) < 5)) {
+											if (
+												index === rewardIndex &&
+												haversineDistance(
+													item.lat,
+													item.lng,
+													33.645933,
+													-117.842795
+												) < 5
+											) {
 												setTotalScore(
 													totalScore + REWARD_AMOUNT
 												);
@@ -410,7 +498,18 @@ function App() {
 							</div>
 					  ))
 					: savedPlaces.map((item, index) => (
-							<div key={index}>
+							<div
+								key={index}
+								onClick={() => {
+									if (mapRef.current) {
+										mapRef.current.panTo({
+											lat: mapCenterLat,
+											lng: mapCenterLng,
+										});
+										mapRef.current.setZoom(17);
+									}
+								}}
+							>
 								<AddedLocationCard
 									{...item}
 									isOrigin={originIndex === index}
