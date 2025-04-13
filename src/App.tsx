@@ -55,8 +55,8 @@ function App() {
 	const [searchQuery, setSearchQuery] = useState<string>("");
 	const [resultCards, setSearchResults] = useState<Location[]>([]);
 	const [savedPlaces, setSavedPlaces] = useState<Location[]>([]);
-	const [mapCenterLng, setMapCenterLng] = useState(-117.842795);
-	const [mapCenterLat, setMapCenterLat] = useState(33.645933);
+	const [mapCenterLng] = useState(-117.842795);
+	const [mapCenterLat] = useState(33.645933);
 
 	const [totalDistance, setTotalDistance] = useState(0);
 	const [totalTime, setTotalTime] = useState(0);
