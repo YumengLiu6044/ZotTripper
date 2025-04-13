@@ -417,7 +417,7 @@ function App() {
 			</div>
 
 			{/* Search bar */}
-			<div className="absolute left-0 flex flex-col gap-5 p-10 h-full bg-neutral-800/0 overflow-scroll max-w-3/7">
+			<div className="absolute left-0 flex flex-col gap-5 p-10 h-full bg-neutral-800/0 overflow-scroll max-w-3/7 no-scrollbar">
 				<div className="flex flex-row items-center">
 					<span className="text-7xl font-semibold text-blue-500">
 						Zot<span className="text-yellow-400">Tripper</span>
