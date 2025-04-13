@@ -365,14 +365,21 @@ function App() {
 				</LoadScript>
 
 				<div className="w-1/6 absolute top-10 right-20 gap-3 border-1 border-white/20 rounded-xl p-3 flex flex-col bg-black/80 text-lg">
-					<span>
-						Total Distance <span>{totalDistance.toFixed(2)}</span>{" "}
-						Miles
-					</span>
-					<span>
-						Total Time <span>{(totalTime / 60).toFixed(2)}</span>{" "}
-						mins
-					</span>
+					<span>Total Distance:</span>
+					<span className="w-full flex justify-center">{totalDistance.toFixed(2)} Miles</span>{" "}
+					<span>Total Time:</span>
+					{totalTime > 3600 ? (
+						<span className="w-full flex justify-center">
+							{" "}
+							{(totalTime / 3600).toFixed(0)} Hours{" "}
+							<span className="pl-1">
+								{" "}
+								{((totalTime % 3600) / 60).toFixed(0)} Minutes
+							</span>
+						</span>
+					) : (
+						<span className="w-full flex justify-center"> {(totalTime / 60).toFixed(1)} Minutes </span>
+					)}
 					<div className="flex gap-2">
 						<input
 							type="checkbox"
