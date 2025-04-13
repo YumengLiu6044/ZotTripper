@@ -87,10 +87,6 @@ function App() {
 		google.maps.DirectionsWaypoint[]
 	>([]);
 
-	const [computedWayPoints, setComputedWaypoints] = useState<
-		LocationLiteral[]
-	>([]);
-
 	const [totalScore, setTotalScore] = useState(0);
 	const [rewardIndex, setRewardIndex] = useState(0);
 	const REWARD_AMOUNT = 100;
@@ -211,15 +207,6 @@ function App() {
 					travel_time += leg.duration?.value ?? 0;
 				});
 
-				setComputedWaypoints(
-					response.routes[0].overview_path.map((point) => {
-						const newLocation: LocationLiteral = {
-							lat: point.lat(),
-							lng: point.lng(),
-						};
-						return newLocation;
-					})
-				);
 				setTotalDistance(distance / 1600);
 				setTotalTime(travel_time);
 			} else {
@@ -341,7 +328,7 @@ function App() {
 				<span className="text-3xl font-medium">Leader Board</span>
 				<div className="flex flex-col ">
 					{
-						leaderBoard.map((item, index) => (
+						leaderBoard.map((item) => (
 							<div className="flex gap-3 w-full justify-between">
 								<span className={item.name === "You" ? "text-purple-400" : ""}>{item.name}</span>
 								<span>{item.score}</span>
