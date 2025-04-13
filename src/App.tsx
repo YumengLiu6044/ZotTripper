@@ -16,6 +16,7 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import anteaterImg from "./assets/anteater.png";
 
 const googleAPIKey = import.meta.env.VITE_API_KEY;
+console.log(googleAPIKey)
 const libraries: "places"[] = ["places"];
 
 const containerStyle = {
@@ -114,7 +115,6 @@ function App() {
 		const request = {
 			fields: ["displayName", "location", "formattedAddress", "photos"],
 			textQuery: searchQuery,
-			
 			locationBias: {
 				lat: 33.645933,
 				lng: -117.842795,
