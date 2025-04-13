@@ -16,7 +16,6 @@ import "bootstrap-icons/font/bootstrap-icons.css";
 import anteaterImg from "./assets/anteater.png";
 
 const googleAPIKey = import.meta.env.VITE_API_KEY;
-console.log(googleAPIKey);
 const libraries: "places"[] = ["places"];
 
 const containerStyle = {
@@ -366,7 +365,9 @@ function App() {
 
 				<div className="w-1/6 absolute top-10 right-20 gap-3 border-1 border-white/20 rounded-xl p-3 flex flex-col bg-black/80 text-lg">
 					<span>Total Distance:</span>
-					<span className="w-full flex justify-center">{totalDistance.toFixed(2)} Miles</span>{" "}
+					<span className="w-full flex justify-center">
+						{totalDistance.toFixed(2)} Miles
+					</span>{" "}
 					<span>Total Time:</span>
 					{totalTime > 3600 ? (
 						<span className="w-full flex justify-center">
@@ -378,7 +379,10 @@ function App() {
 							</span>
 						</span>
 					) : (
-						<span className="w-full flex justify-center"> {(totalTime / 60).toFixed(1)} Minutes </span>
+						<span className="w-full flex justify-center">
+							{" "}
+							{(totalTime / 60).toFixed(1)} Minutes{" "}
+						</span>
 					)}
 					<div className="flex gap-2">
 						<input
@@ -397,8 +401,8 @@ function App() {
 			<div className="w-1/6 absolute right-20 bottom-10 flex flex-col p-3 justify-center border-1 border-white/20 rounded-xl bg-black/80 text-lg gap-5">
 				<span className="text-3xl font-medium">Leader Board</span>
 				<div className="flex flex-col ">
-					{leaderBoard.map((item) => (
-						<div className="flex gap-3 w-full justify-between">
+					{leaderBoard.map((item, index) => (
+						<div className="flex gap-3 w-full justify-between" key={index}>
 							<span
 								className={
 									item.name === "You" ? "text-purple-400" : ""
@@ -499,6 +503,9 @@ function App() {
 												...savedPlaces,
 												item,
 											]);
+											if (savedPlaces.length === 0) {
+												setOriginIndex(0)
+											}
 										}
 									}}
 								></SearchResultCard>
@@ -532,6 +539,9 @@ function App() {
 											setOriginIndex(-1);
 											setTotalDistance(0);
 											setTotalTime(0);
+										}
+										if (index < originIndex) {
+											setOriginIndex(originIndex - 1);
 										}
 										setTotalScore(
 											totalScore - REWARD_AMOUNT
