@@ -63,7 +63,7 @@ function App() {
 
 	const [leaderBoard, setLeaderBoard] = useState<LeaderBoardObj[]>([
 		{
-			name: "Jongming",
+			name: "Jongmin",
 			score: 1000,
 		},
 		{
@@ -451,6 +451,7 @@ function App() {
 						Search
 					</button>
 				</div>
+				
 				{searchQuery !== ""
 					? resultCards.map((item, index) => (
 							<div
