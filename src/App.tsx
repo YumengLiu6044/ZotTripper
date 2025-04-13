@@ -545,7 +545,7 @@ function App() {
 											setOriginIndex(originIndex - 1);
 										}
 										setTotalScore(
-											totalScore - REWARD_AMOUNT
+											Math.max(totalScore - REWARD_AMOUNT, 0)
 										);
 										console.log(totalScore);
 									}}
